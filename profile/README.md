@@ -24,3 +24,7 @@
 
 We're an early-stage effort and could use support to keep building. If you'd like to help,
 [join us on Discord](https://discord.gg/hPXjhXKbF).
+
+---
+
+Led by [Omar Aljarrah](mailto:oaljarrah@dexpace.org)
