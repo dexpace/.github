@@ -6,12 +6,12 @@
 </p>
 
 <p align="center">
-  Standards-faithful, typed tooling for building SDKs and API clients.
+  A developer platform for building developer tools — DX first, production always.
 </p>
 
 <p align="center">
-  We build the plumbing underneath API clients and SDKs — immutable models, typed
-  interfaces, and spec-driven generation — so they are consistent and correct by construction.
+  We work on the tooling that shapes how developers build, ship, and integrate software —
+  typed, standards-faithful, and correct by construction from the ground up.
 </p>
 
 <p align="center">
