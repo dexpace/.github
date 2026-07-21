@@ -1,4 +1,9 @@
-<h1 align="center">dexpace</h1>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/dexpace/morphic/main/docs/assets/dexpace-wordmark-dark.svg">
+    <img alt="dexpace" src="https://raw.githubusercontent.com/dexpace/morphic/main/docs/assets/dexpace-wordmark-light.svg" width="280">
+  </picture>
+</p>
 
 <p align="center">
   Standards-faithful, typed tooling for building SDKs and API clients.
