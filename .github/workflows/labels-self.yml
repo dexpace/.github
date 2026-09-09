@@ -1,0 +1,36 @@
+# This repository's own caller.
+#
+# Named labels-self.yml, not labels.yml, because in THIS repo that name is
+# already taken by the reusable workflow itself. Every other repo in the org
+# uses labels.yml.
+#
+# `uses: ./` resolves to this repo at this ref, so running it from a branch
+# tests that branch's workflow against that branch's label definitions.
+#
+# Manual dispatch only, and dry_run defaults ON. This is the smoke test for the
+# whole system; it should not prune anything until it has been read once.
+
+name: Labels (self)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Report the plan, mutate nothing'
+        type: boolean
+        default: true
+      prune:
+        description: 'Delete labels absent from the profiles'
+        type: boolean
+        default: false
+
+permissions:
+  issues: write
+
+jobs:
+  sync:
+    uses: ./.github/workflows/labels.yml
+    with:
+      profiles: common,docs
+      dry_run: ${{ inputs.dry_run }}
+      prune: ${{ inputs.prune }}

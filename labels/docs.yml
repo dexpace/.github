@@ -1,0 +1,37 @@
+# docs.yml — repos where documentation is tracked work. 7 labels. #006b75
+#
+# Documentation is a first-class work stream across the org, not a footnote on
+# the SDKs — four repos exist only to hold it. So this is its own profile,
+# opt-in, and it composes with common alone for the pure documentation repos.
+#
+# Pairs with type:docs. The type: says it is documentation work, the docs: says
+# which kind. An issue may carry type:bug + docs:api-reference when the
+# reference documents behavior the code does not have.
+
+- name: "docs:api-reference"
+  color: "006b75"
+  description: "Generated or hand-written reference for the public surface"
+
+- name: "docs:guide"
+  color: "006b75"
+  description: "Narrative guides, tutorials, how-tos"
+
+- name: "docs:example"
+  color: "006b75"
+  description: "Runnable examples and sample projects"
+
+- name: "docs:readme"
+  color: "006b75"
+  description: "Repository README and top-level entry points"
+
+- name: "docs:changelog"
+  color: "006b75"
+  description: "Changelog and release-note prose"
+
+- name: "docs:migration"
+  color: "006b75"
+  description: "Upgrade and version-migration guidance"
+
+- name: "docs:site"
+  color: "006b75"
+  description: "The documentation site itself: build, navigation, theming, search"

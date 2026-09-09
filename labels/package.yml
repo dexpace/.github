@@ -1,0 +1,21 @@
+# package.yml — repos that publish a versioned artifact. 2 labels. #0e8a16
+#
+# Ten repos take this: the six ports, plus kuri, morphic, zeus and
+# dexpace-react.
+#
+# Deliberately NOT folded into sdk. kuri is the only repository in the org with
+# published releases — six of them — and it is a Kotlin URI library, not an SDK
+# port. A release:* vocabulary reachable only through the sdk profile would have
+# excluded its heaviest user.
+#
+# Shares the release: prefix and color with release:blocker in common.yml. One
+# dimension split across two profiles: the prefix is the dimension, the profile
+# only decides who can reach each value.
+
+- name: "release:packaging"
+  color: "0e8a16"
+  description: "Package metadata, manifests, distribution shape, published artifact"
+
+- name: "release:versioning"
+  color: "0e8a16"
+  description: "Semantic versioning, changelog entries, version-bump machinery"

@@ -1,0 +1,125 @@
+# common.yml — every repository in the org. 20 labels.
+#
+# Four dimensions, not one flat list. An issue carries roughly three of these.
+#
+#   type:*        nature of the change      #1d76db
+#   status:*      states a person must see without opening a board   #fbca04
+#   resolution:*  why it closed             #cfd3d7
+#   flags         orthogonal, combine freely
+#
+# Absence of a status: label means the issue has not been triaged yet.
+# Nothing applies a label on creation, so bare IS the untriaged state.
+
+# --- type: nature of the change ---
+# Mirrors the commit prefixes already mandated in each SDK's CONTRIBUTING.md.
+# One vocabulary for commits and issues, not two.
+
+- name: "type:bug"
+  color: "1d76db"
+  description: "Defect in shipped behavior"
+
+- name: "type:feature"
+  color: "1d76db"
+  description: "New capability or enhancement"
+
+- name: "type:docs"
+  color: "1d76db"
+  description: "Documentation only"
+
+- name: "type:test"
+  color: "1d76db"
+  description: "Tests only"
+
+- name: "type:ci"
+  color: "1d76db"
+  description: "Build, release, or CI configuration"
+
+- name: "type:chore"
+  color: "1d76db"
+  description: "Refactor or cleanup, no behavior change"
+
+- name: "type:question"
+  color: "1d76db"
+  description: "Usage question, not a defect"
+
+# --- status: at most one at a time ---
+# Deliberately short. The board's Status field owns position in flow — Todo,
+# In progress, In review, Done. What survives here is what has to be legible in
+# an issue list and across repositories, and what GitHub cannot answer itself.
+#
+# status:accepted and status:in-progress are board columns, not labels.
+# status:in-review is a native search, not a label:
+#   org:dexpace is:open is:pr -is:draft review:none
+
+- name: "status:blocked"
+  color: "fbca04"
+  description: "Waiting on something external"
+
+- name: "status:needs-info"
+  color: "fbca04"
+  description: "Waiting on the reporter"
+
+# --- resolution: applied at close, on issues that close without a fix ---
+
+- name: "resolution:duplicate"
+  color: "cfd3d7"
+  description: "Already tracked elsewhere"
+
+- name: "resolution:invalid"
+  color: "cfd3d7"
+  description: "Not a defect, or not reproducible"
+
+- name: "resolution:wontfix"
+  color: "cfd3d7"
+  description: "Deliberately not doing this"
+
+# --- flags: orthogonal, combine freely ---
+
+- name: "breaking-change"
+  color: "b60205"
+  description: "Requires a major version"
+
+- name: "security"
+  color: "d93f0b"
+  description: "Security impact; see SECURITY.md for private reports"
+
+- name: "regression"
+  color: "d93f0b"
+  description: "Worked in an earlier release"
+
+- name: "performance"
+  color: "d93f0b"
+  description: "Latency, throughput, allocation, or footprint"
+
+# Not optional. Dependabot creates this label itself when it is missing, and a
+# pruning sync would then delete and re-create it every Monday. Declaring it
+# ends the fight.
+- name: "dependencies"
+  color: "0366d6"
+  description: "Dependency updates"
+
+# In common rather than package on purpose: a documentation site and a
+# styleguide both have a "cannot ship until this clears" state, even though
+# neither has a version number.
+- name: "release:blocker"
+  color: "0e8a16"
+  description: "Must clear before the next release or deploy"
+
+# --- contributor discovery: exact strings, deliberately unprefixed ---
+#
+# The one deliberate exception to dimension:value naming. GitHub's own
+# contributor-discovery surfaces — the repository Contribute page and the
+# org-wide newcomer search — match these BY EXACT STRING. There is no prefixed
+# equivalent; the spelling is the interface. meta:good-first-issue would
+# silently drop the six public ports out of that discovery path.
+#
+# Declared here with our descriptions and colors, so they are our labels that
+# happen to share GitHub's spelling rather than defaults left lying around.
+
+- name: "good first issue"
+  color: "7057ff"
+  description: "Good for newcomers"
+
+- name: "help wanted"
+  color: "008672"
+  description: "Extra attention is needed"

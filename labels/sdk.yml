@@ -1,0 +1,86 @@
+# sdk.yml — the six ports only. 13 labels.
+#
+#   nodejs-sdk  python-sdk  ruby-sdk  java-sdk (Kotlin)  go-sdk  dotnet-sdk
+#
+# All six implement the same language-agnostic product spec and the same
+# numbered requirements. The area: and spec: vocabulary is meaningful only for
+# these six — that is what this profile exists to fence off.
+#
+#   area:*    spec subsystem                          #5319e7
+#   spec:*    relationship to the normative contract  #d4c5f9
+#   compat:*  what the port runs on                   #c2e0c6
+
+# --- area: eight buckets over twenty-one requirement-ID families ---
+#
+# THE MAPPING IS NORMATIVE and lives in labels/README.md. Nobody reasons about
+# which bucket a requirement belongs to, they look it up. An issue citing SSE-42
+# is area:streaming, always — the fact that it describes reconnect behavior
+# never pulls it toward area:resilience.
+#
+# Every family maps to exactly one bucket, and every bucket has at least one
+# family. Adding a family to the spec means adding a row to README.md, not
+# inventing a label.
+
+- name: "area:core"
+  color: "5319e7"
+  description: "Core HTTP, IO, body, context, encoding: HTTP-* IO-* BODY-* CTX-* UTF-*"
+
+- name: "area:pipeline"
+  color: "5319e7"
+  description: "Middleware pipeline and cross-cutting concerns: PIPE-* XCUT-*"
+
+- name: "area:resilience"
+  color: "5319e7"
+  description: "Retry, recovery, redirects: RETRY-* RECOV-* REDIR-*"
+
+- name: "area:auth"
+  color: "5319e7"
+  description: "Authentication and credentials: AUTH-*"
+
+- name: "area:streaming"
+  color: "5319e7"
+  description: "Server-sent events and pagination: SSE-* PAGE-*"
+
+- name: "area:serde"
+  color: "5319e7"
+  description: "Serialization and deserialization: SERDE-*"
+
+- name: "area:transport"
+  color: "5319e7"
+  description: "Transport, async model, seams: TRANSPORT-* ASYNC-* SEAM-*"
+
+- name: "area:platform"
+  color: "5319e7"
+  description: "Config, observability, non-functional, hashing: CFG-* OBS-* NFR-* SHA-*"
+
+# --- spec: relationship to the normative contract ---
+#
+# spec:parity earns its keep only because there are six ports. It is how a
+# divergence found while working on Ruby gets filed against Node, and it is the
+# label to sweep before declaring two ports equivalent.
+
+- name: "spec:conformance"
+  color: "d4c5f9"
+  description: "Conformance-suite behavior, or a gap in the suite itself"
+
+- name: "spec:deviation"
+  color: "d4c5f9"
+  description: "Deliberate, recorded divergence from the normative contract"
+
+- name: "spec:gap"
+  color: "d4c5f9"
+  description: "A numbered requirement not yet satisfied by this port"
+
+- name: "spec:parity"
+  color: "d4c5f9"
+  description: "This port behaves differently from another port"
+
+# --- compat: one label, not a matrix ---
+#
+# Which runtime is in the issue text; the label is for filtering the class of
+# problem. Six ports times a version matrix would be forty labels that no one
+# applies consistently.
+
+- name: "compat:runtime"
+  color: "c2e0c6"
+  description: "Supported language or runtime versions, and divergence between them"

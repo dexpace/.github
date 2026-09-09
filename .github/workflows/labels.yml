@@ -1,0 +1,107 @@
+# Reusable label sync for the dexpace org.
+#
+# PULL, not push. Each repository calls this workflow and mutates only itself,
+# with the GITHUB_TOKEN that GitHub already grants the run. No org-wide PAT
+# exists anywhere, and none is needed: this repository is public, so any caller
+# can read the label definitions with no token at all.
+#
+# Callers: in your repo, Actions -> New workflow -> Labels (under "Workflows
+# created by dexpace"), then set `profiles`. Source of that template is
+# .github/workflow-templates/labels.yml.
+
+name: Labels
+
+on:
+  workflow_call:
+    inputs:
+      profiles:
+        description: "Comma-separated profiles, in any order. e.g. common,docs,package,sdk"
+        required: true
+        type: string
+      prune:
+        description: >-
+          Delete labels absent from the profiles. This is what makes the YAML
+          authoritative — and it is also what deletes anything hand-created in
+          the web UI. Leave on except during the first run against a repo.
+        required: false
+        default: true
+        type: boolean
+      dry_run:
+        description: "Report the plan and mutate nothing. Use for the first run against a repo."
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # Public repo, so github.token reads it fine. No secret, no PAT.
+      #
+      # job_workflow_sha is the commit of THIS reusable workflow file, so the
+      # label definitions always come from the same commit as the logic reading
+      # them. Hardcoding `main` would break every call made from a branch — the
+      # definitions would come from main while the logic came from the branch —
+      # and would make a definitions change non-atomic with a workflow change.
+      - name: Check out the label definitions
+        uses: actions/checkout@v4
+        with:
+          repository: dexpace/.github
+          ref: ${{ github.job_workflow_sha }}
+          path: definitions
+
+      - name: Merge the requested profiles
+        env:
+          PROFILES: ${{ inputs.profiles }}
+        run: |
+          set -euo pipefail
+          out="$GITHUB_WORKSPACE/.labels.merged.yml"
+          : > "$out"
+
+          IFS=',' read -ra requested <<< "$PROFILES"
+          for raw in "${requested[@]}"; do
+            profile="$(printf '%s' "$raw" | tr -d '[:space:]')"
+            [ -n "$profile" ] || continue
+
+            src="definitions/labels/${profile}.yml"
+            if [ ! -f "$src" ]; then
+              echo "::error::unknown profile '${profile}' — no ${src}. Valid: common docs package sdk"
+              exit 1
+            fi
+
+            printf '# ---- %s ----\n' "$profile" >> "$out"
+            cat "$src" >> "$out"
+            printf '\n' >> "$out"
+          done
+
+          count="$(grep -c '^- name:' "$out" || true)"
+          if [ "$count" -eq 0 ]; then
+            echo "::error::profiles '${PROFILES}' merged to zero labels; refusing to sync"
+            exit 1
+          fi
+
+          # A duplicate name across profiles means two profiles disagree about
+          # one label. Fail loudly rather than let last-write-wins decide.
+          dupes="$(grep '^- name:' "$out" | sort | uniq -d || true)"
+          if [ -n "$dupes" ]; then
+            echo "::error::label declared in more than one profile:"
+            printf '%s\n' "$dupes"
+            exit 1
+          fi
+
+          echo "Merged ${count} labels from: ${PROFILES}"
+
+      # Pin to a commit SHA before org-wide rollout. This action receives
+      # issues: write in every repo that calls this workflow, so a moved tag
+      # would be a write path into all of them:
+      #   gh api repos/crazy-max/ghaction-github-labeler/commits/v5 --jq .sha
+      - name: Sync
+        uses: crazy-max/ghaction-github-labeler@v5
+        with:
+          github_token: ${{ github.token }}
+          yaml_file: .labels.merged.yml
+          skip_delete: ${{ !inputs.prune }}
+          dry_run: ${{ inputs.dry_run }}

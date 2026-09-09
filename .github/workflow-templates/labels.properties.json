@@ -1,0 +1,6 @@
+{
+  "name": "Labels",
+  "description": "Sync this repository's labels from the org vocabulary in dexpace/.github. Set `profiles` after adding.",
+  "iconName": "octicon tag",
+  "categories": ["Automation"]
+}
