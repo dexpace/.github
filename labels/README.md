@@ -70,20 +70,53 @@ need a token able to rewrite every repository in the org, held as a secret.
 **Nothing here propagates on its own.** A repo without the caller file is
 untouched.
 
-### First run against a repo with issue history
+### Onboarding a repository
 
-The prune pass is the only irreversible moment in this plan. Do not skip the
-dry run.
+The order is not cosmetic. **Renames must happen before the caller file
+exists.** If a sync creates `type:bug` first, `gh label edit bug --name
+type:bug` fails because the name is taken, and the cheap migration — which
+preserves the label on every issue carrying it — is gone for good.
 
-1. Rename first, never delete-and-recreate — see [`MIGRATION.md`](MIGRATION.md).
-   `gh label edit` preserves the label on every issue already carrying it;
-   delete-and-recreate strips it from all of them, silently.
-2. Add the caller file with `profiles` set.
-3. Run it by hand: **Actions → Labels → Run workflow**, `dry_run` on, `prune`
-   off. Read the plan.
-4. Run again with both at their defaults. Stragglers disappear.
+The template ships dispatch-only for exactly this reason: committing it cannot
+fire a sync.
 
-After that it is hands-off: push, Monday cron, or manual dispatch.
+1. **Rename pass** — [`MIGRATION.md`](MIGRATION.md). Before anything else.
+2. **Add the caller**, set `profiles`. Nothing runs.
+3. **Dispatch, `dry_run` on.** Read the plan. This is the review step, and it
+   is the only one that is free.
+4. **Dispatch, `dry_run` off.** Labels are created and corrected. Still no
+   deletions — `prune` defaults off.
+5. **Set repository variable `LABELS_PRUNE=true`**, dispatch once more with
+   `prune` on. Strays are deleted. This is the irreversible moment; step 3
+   is what makes it reviewable.
+6. **Uncomment the `push` and `schedule` triggers** in the caller.
+
+Step 6 is the one that gets forgotten. Without the cron, a label edited in the
+web UI stays edited and the YAML quietly becomes advisory. Steps 1 and 6 are
+the two ends of the onboarding, and both are silent when skipped.
+
+### Deletion is opt-in per repository
+
+Only a `workflow_dispatch` that explicitly asks for it, or a repository with
+`LABELS_PRUNE=true`, can delete a label. An unattended cron in a repo without
+that variable heals colors and descriptions and restores labels someone
+deleted by hand, but removes nothing.
+
+That is deliberate. Prune is what makes these files authoritative, and it is
+also what destroys issue metadata when a repo was onboarded carelessly. Making
+the destructive half a separate, visible switch costs one click per repo.
+
+### Labels Dependabot owns
+
+Dependabot applies an ecosystem label alongside `dependencies` — `javascript`
+in `nodejs-sdk`, `python`, `go`, `ruby`, `nuget` elsewhere — and recreates it
+whenever it goes missing. Pruning those starts a fight that repeats every
+Monday.
+
+They cannot be declared in `common.yml` because the ecosystem differs per
+repository, so the workflow's `exclude` input holds them instead and defaults
+to the set this org needs. `dependencies` itself is different: it is identical
+everywhere, so it is declared in `common.yml` rather than excluded.
 
 ## Adding or changing a label
 

@@ -1,7 +1,7 @@
 # Migration
 
-Run the rename pass **before** the first sync against a repo with issue
-history. `gh label edit --name` preserves the label on every issue already
+Run the rename pass **before the caller workflow file exists in the repo**, not
+merely before the first sync. `gh label edit --name` preserves the label on every issue already
 carrying it. Delete-and-recreate strips it from all of them, silently — and a
 pruning sync deletes anything not in the profiles, so an unrenamed stock label
 is a silent loss of issue metadata.
@@ -10,8 +10,19 @@ After the renames, the sync only creates what is genuinely new.
 
 ## `nodejs-sdk` — the pilot
 
-Current state, sixteen labels: GitHub's stock nine untouched, plus seven
-hand-added with **empty descriptions** and unrelated colors.
+Current state, **eighteen** labels, measured 2026-09-09: GitHub's stock nine
+untouched, plus seven hand-added with **empty descriptions** and unrelated
+colors, plus two Dependabot created for itself — `dependencies` and
+`javascript`.
+
+`dependencies` is declared in `common.yml` and survives. `javascript` is an
+ecosystem label that differs per repo, so it is protected by the workflow's
+`exclude` input instead of being declared. Neither needs migrating.
+
+Usage at that date, which is what a careless prune would destroy:
+`v1/MVP` 46 items, `core` 26, `bug` 16, `resilience` 8, `documentation` 7,
+`javascript` 4, `enhancement` 3, `logging` 3, `conformance` 3, `transport` 3,
+`adapters` 2 — **121 label assignments** across 15 labels.
 
 | Current | Becomes |
 |---|---|

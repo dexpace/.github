@@ -31,6 +31,25 @@ on:
         required: false
         default: false
         type: boolean
+      exclude:
+        description: >-
+          Newline-separated label names never created, updated or deleted.
+          Defaults to the labels Dependabot invents for itself. Dependabot
+          applies an ecosystem label alongside `dependencies` and recreates it
+          whenever it is missing, so pruning them starts a fight that repeats
+          every Monday. They cannot live in common.yml either — the ecosystem
+          differs per repository. Excluding them is the only stable answer.
+        required: false
+        type: string
+        default: |
+          javascript
+          python
+          java
+          go
+          ruby
+          nuget
+          docker
+          github_actions
 
 permissions:
   issues: write
@@ -110,3 +129,4 @@ jobs:
           yaml-file: .labels.merged.yml
           skip-delete: ${{ !inputs.prune }}
           dry-run: ${{ inputs.dry_run }}
+          exclude: ${{ inputs.exclude }}
