@@ -47,7 +47,7 @@ jobs:
       # definitions would come from main while the logic came from the branch —
       # and would make a definitions change non-atomic with a workflow change.
       - name: Check out the label definitions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: dexpace/.github
           ref: ${{ github.job_workflow_sha }}
@@ -98,10 +98,15 @@ jobs:
       # issues: write in every repo that calls this workflow, so a moved tag
       # would be a write path into all of them:
       #   gh api repos/crazy-max/ghaction-github-labeler/commits/v5 --jq .sha
+      # Input names are HYPHENATED. Underscores are silently ignored by the
+      # actions runner, which then falls back to defaults — and those defaults
+      # are dry-run: false and skip-delete: false. A typo here does not fail
+      # safe, it fails destructive: a run asked for as a dry run would prune
+      # live labels. Verified against a real run before this was corrected.
       - name: Sync
         uses: crazy-max/ghaction-github-labeler@v5
         with:
-          github_token: ${{ github.token }}
-          yaml_file: .labels.merged.yml
-          skip_delete: ${{ !inputs.prune }}
-          dry_run: ${{ inputs.dry_run }}
+          github-token: ${{ github.token }}
+          yaml-file: .labels.merged.yml
+          skip-delete: ${{ !inputs.prune }}
+          dry-run: ${{ inputs.dry_run }}
